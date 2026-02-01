@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TarjimonUz</title>
+    <meta charset="UTF-8">
+</head>
+<body>
 <div style="max-width:500px; margin:20px auto; padding:15px; background:white; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); font-family:Arial,sans-serif;">
   
   <!-- TITLE -->
@@ -31,7 +38,7 @@
   <textarea id="inputText" style="width:100%; height:120px; padding:12px; border:1px solid #ddd; border-radius:6px; font-size:14px; resize:vertical; margin-bottom:10px;" placeholder="Matnni kiriting...">Salom</textarea>
   
   <!-- TUGMA -->
-  <button onclick="translateNow()" style="width:100%; padding:12px; background:#1a73e8; color:white; border:none; border-radius:6px; font-size:16px; cursor:pointer; margin-bottom:15px;">
+  <button id="translateBtn" style="width:100%; padding:12px; background:#1a73e8; color:white; border:none; border-radius:6px; font-size:16px; cursor:pointer; margin-bottom:15px;">
     Tarjima qilish
   </button>
   
@@ -41,14 +48,14 @@
   </div>
   
   <!-- OVOZ TUGMASI -->
-  <button onclick="speakResult()" style="width:100%; padding:10px; background:#4caf50; color:white; border:none; border-radius:6px; font-size:14px; cursor:pointer; margin-top:10px;">
+  <button id="speakBtn" style="width:100%; padding:10px; background:#4caf50; color:white; border:none; border-radius:6px; font-size:14px; cursor:pointer; margin-top:10px;">
     🔊 Ovozli o'qish
   </button>
 </div>
 
 <script>
-// HAQIQIY TARJIMA FUNKSIYASI
-async function translateNow() {
+// TARJIMA FUNKSIYASI
+function translateNow() {
   const text = document.getElementById('inputText').value;
   const from = document.getElementById('fromLang').value;
   const to = document.getElementById('toLang').value;
@@ -60,47 +67,34 @@ async function translateNow() {
   
   document.getElementById('result').innerHTML = 'Tarjima qilinmoqda...';
   
-  // 1. MyMemory API (eng ishonchli)
-  try {
-    const response = await fetch(https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to});
-    const data = await response.json();
-    
-    if(data.responseData && data.responseData.translatedText) {
-      document.getElementById('result').innerHTML = data.responseData.translatedText;
-    } else {
-      throw new Error('API javob bermadi');
+  // LUG'AT
+  const dict = {
+    'uz-en': {'salom':'hello','dunyo':'world','kitob':'book','uy':'house'},
+    'en-uz': {'hello':'salom','world':'dunyo','book':'kitob','house':'uy'},
+    'uz-ru': {'salom':'привет','dunyo':'мир','kitob':'книга'},
+    'ru-uz': {'привет':'salom','мир':'dunyo','книга':'kitob'},
+    'uz-tr': {'salom':'merhaba','dunyo':'dünya','kitob':'kitap'},
+    'tr-uz': {'merhaba':'salom','dünya':'dunyo','kitap':'kitob'}
+  };
+  
+  const key = from + '-' + to;
+  const words = text.toLowerCase().split(' ');
+  
+  // TARJIMA QILISH
+  const translated = words.map(word => {
+    if (dict[key] && dict[key][word]) {
+      return dict[key][word];
     }
-  } catch(e) {
-    // 2. Lokal lug'at (zaxira)
-    const dict = {
-      'uz-en': {'salom':'hello','dunyo':'world','kitob':'book','uy':'house'},
-      'en-uz': {'hello':'salom','world':'dunyo','book':'kitob','house':'uy'},
-      'uz-ru': {'salom':'привет','dunyo':'мир'},
-      'ru-uz': {'привет':'salom','мир':'dunyo'},
-      'uz-tr': {'salom':'merhaba','dunyo':'dünya'},
-      'tr-uz': {'merhaba':'salom','dünya':'dunyo'}
-    };
-    
-    const key = from + '-' + to;
-    const words = text.toLowerCase().split(' ');
-    
-    // Eski brauzerlar uchun (optional chaining emas)
-    const translated = words.map(word => {
-      if (dict[key] && dict[key][word]) {
-        return dict[key][word];
-      }
-      return word;
-    }).join(' ');
-    
-    document.getElementById('result').innerHTML = translated;
-  }
+    return word;
+  }).join(' ');
+  
+  document.getElementById('result').innerHTML = translated;
 }
 
 // OVOZLI O'QISH
 function speakResult() {
   const text = document.getElementById('result').innerText;
-
-if(text && text !== 'Natija shu yerda...' && !text.includes('Tarjima') && !text.includes('Xato')) {
+  if(text && text !== 'Natija shu yerda...' && text !== 'Tarjima qilinmoqda...') {
     if('speechSynthesis' in window) {
       const speech = new SpeechSynthesisUtterance(text);
       speech.lang = document.getElementById('toLang').value === 'en' ? 'en-US' : 'uz-UZ';
@@ -110,9 +104,18 @@ if(text && text !== 'Natija shu yerda...' && !text.includes('Tarjima') && !text.
   }
 }
 
-// SAYT YUKLANGANDA BIRINCHI TARJIMA
-window.onload = function() {
+// TUGMALARNI BOG'LASH
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('translateBtn').addEventListener('click', translateNow);
+
+  document.getElementById('speakBtn').addEventListener('click', speakResult);
+  
+  // BIRINCHI TARJIMA
   translateNow();
-};
+});
 </script>
+</body>
+</html>
+
+
 
