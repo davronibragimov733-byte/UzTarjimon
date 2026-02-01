@@ -7,13 +7,11 @@
 <body>
 <div style="max-width:500px; margin:20px auto; padding:15px; background:white; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); font-family:Arial,sans-serif;">
   
-  <!-- TITLE -->
   <div style="text-align:center; margin-bottom:20px;">
     <h3 style="color:#1a73e8; margin:0;">TarjimonUz</h3>
     <p style="color:#666; margin:5px 0 0 0; font-size:14px;">Google Translate bilan</p>
   </div>
   
-  <!-- TIL TANLASH -->
   <div style="display:flex; gap:10px; margin-bottom:15px;">
     <div style="flex:1;">
       <select id="fromLang" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
@@ -34,27 +32,22 @@
     </div>
   </div>
   
-  <!-- MATN KIRITISH -->
   <textarea id="inputText" style="width:100%; height:120px; padding:12px; border:1px solid #ddd; border-radius:6px; font-size:14px; resize:vertical; margin-bottom:10px;" placeholder="Matnni kiriting...">Salom</textarea>
   
-  <!-- TUGMA -->
   <button id="translateBtn" style="width:100%; padding:12px; background:#1a73e8; color:white; border:none; border-radius:6px; font-size:16px; cursor:pointer; margin-bottom:15px;">
     Tarjima qilish
   </button>
   
-  <!-- NATIJA -->
   <div id="result" style="min-height:100px; padding:15px; border:1px solid #4caf50; border-radius:6px; background:#f9f9f9; font-size:15px;">
     Natija shu yerda...
   </div>
   
-  <!-- OVOZ TUGMASI -->
   <button id="speakBtn" style="width:100%; padding:10px; background:#4caf50; color:white; border:none; border-radius:6px; font-size:14px; cursor:pointer; margin-top:10px;">
     🔊 Ovozli o'qish
   </button>
 </div>
 
 <script>
-// TARJIMA FUNKSIYASI
 function translateNow() {
   const text = document.getElementById('inputText').value;
   const from = document.getElementById('fromLang').value;
@@ -67,7 +60,6 @@ function translateNow() {
   
   document.getElementById('result').innerHTML = 'Tarjima qilinmoqda...';
   
-  // LUG'AT
   const dict = {
     'uz-en': {'salom':'hello','dunyo':'world','kitob':'book','uy':'house'},
     'en-uz': {'hello':'salom','world':'dunyo','book':'kitob','house':'uy'},
@@ -80,8 +72,7 @@ function translateNow() {
   const key = from + '-' + to;
   const words = text.toLowerCase().split(' ');
   
-  // TARJIMA QILISH
-  const translated = words.map(word => {
+  const translated = words.map(function(word) {
     if (dict[key] && dict[key][word]) {
       return dict[key][word];
     }
@@ -91,7 +82,6 @@ function translateNow() {
   document.getElementById('result').innerHTML = translated;
 }
 
-// OVOZLI O'QISH
 function speakResult() {
   const text = document.getElementById('result').innerText;
   if(text && text !== 'Natija shu yerda...' && text !== 'Tarjima qilinmoqda...') {
@@ -104,18 +94,15 @@ function speakResult() {
   }
 }
 
-// TUGMALARNI BOG'LASH
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('translateBtn').addEventListener('click', translateNow);
-
   document.getElementById('speakBtn').addEventListener('click', speakResult);
-  
-  // BIRINCHI TARJIMA
   translateNow();
 });
 </script>
 </body>
 </html>
+
 
 
 
