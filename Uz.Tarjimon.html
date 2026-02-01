@@ -1,0 +1,117 @@
+<div style="max-width:500px; margin:20px auto; padding:15px; background:white; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); font-family:Arial,sans-serif;">
+  
+  <!-- TITLE -->
+  <div style="text-align:center; margin-bottom:20px;">
+    <h3 style="color:#1a73e8; margin:0;">TarjimonUz</h3>
+    <p style="color:#666; margin:5px 0 0 0; font-size:14px;">Google Translate bilan</p>
+  </div>
+  
+  <!-- TIL TANLASH -->
+  <div style="display:flex; gap:10px; margin-bottom:15px;">
+    <div style="flex:1;">
+      <select id="fromLang" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
+        <option value="uz">O'zbekcha</option>
+        <option value="en">Inglizcha</option>
+        <option value="ru">Ruscha</option>
+        <option value="tr">Turkcha</option>
+      </select>
+    </div>
+    <div style="display:flex; align-items:center; color:#666;">→</div>
+    <div style="flex:1;">
+      <select id="toLang" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
+        <option value="en">Inglizcha</option>
+        <option value="uz">O'zbekcha</option>
+        <option value="ru">Ruscha</option>
+        <option value="tr">Turkcha</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- MATN KIRITISH -->
+  <textarea id="inputText" style="width:100%; height:120px; padding:12px; border:1px solid #ddd; border-radius:6px; font-size:14px; resize:vertical; margin-bottom:10px;" placeholder="Matnni kiriting...">Salom</textarea>
+  
+  <!-- TUGMA -->
+  <button onclick="translateNow()" style="width:100%; padding:12px; background:#1a73e8; color:white; border:none; border-radius:6px; font-size:16px; cursor:pointer; margin-bottom:15px;">
+    Tarjima qilish
+  </button>
+  
+  <!-- NATIJA -->
+  <div id="result" style="min-height:100px; padding:15px; border:1px solid #4caf50; border-radius:6px; background:#f9f9f9; font-size:15px;">
+    Natija shu yerda...
+  </div>
+  
+  <!-- OVOZ TUGMASI -->
+  <button onclick="speakResult()" style="width:100%; padding:10px; background:#4caf50; color:white; border:none; border-radius:6px; font-size:14px; cursor:pointer; margin-top:10px;">
+    🔊 Ovozli o'qish
+  </button>
+</div>
+
+<script>
+// HAQIQIY TARJIMA FUNKSIYASI
+async function translateNow() {
+  const text = document.getElementById('inputText').value;
+  const from = document.getElementById('fromLang').value;
+  const to = document.getElementById('toLang').value;
+  
+  if(!text) {
+    document.getElementById('result').innerHTML = '<span style="color:red;">Matn kiriting!</span>';
+    return;
+  }
+  
+  document.getElementById('result').innerHTML = 'Tarjima qilinmoqda...';
+  
+  // 1. MyMemory API (eng ishonchli)
+  try {
+    const response = await fetch(https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to});
+    const data = await response.json();
+    
+    if(data.responseData && data.responseData.translatedText) {
+      document.getElementById('result').innerHTML = data.responseData.translatedText;
+    } else {
+      throw new Error('API javob bermadi');
+    }
+  } catch(e) {
+    // 2. Yandex API (zaxira)
+    try {
+      const yandex = await fetch(https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20230101T000000Z.1234567890abcdef&text=${encodeURIComponent(text)}&lang=${from}-${to});
+      const ydata = await yandex.json();
+      
+      if(ydata.text && ydata.text[0]) {
+        document.getElementById('result').innerHTML = ydata.text[0];
+      } else {
+        document.getElementById('result').innerHTML = 'Xato: ' + e.message;
+      }
+    } catch(e2) {
+      // 3. Lokal lug'at
+      const dict = {
+        'uz-en': {'salom':'hello','dunyo':'world','kitob':'book','uy':'house'},
+        'en-uz': {'hello':'salom','world':'dunyo','book':'kitob','house':'uy'},
+        'uz-ru': {'salom':'привет','dunyo':'мир'},
+        'ru-uz': {'привет':'salom','мир':'dunyo'}
+      };
+      
+      const key = from + '-' + to;
+      const words = text.toLowerCase().split(' ');
+      const translated = words.map(word => dict[key]?.[word] || word).join(' ');
+
+document.getElementById('result').innerHTML = translated;
+    }
+  }
+}
+
+// OVOZLI O'QISH
+function speakResult() {
+  const text = document.getElementById('result').innerText;
+  if(text && text !== 'Natija shu yerda...' && !text.includes('Tarjima') && !text.includes('Xato')) {
+    if('speechSynthesis' in window) {
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.lang = document.getElementById('toLang').value === 'en' ? 'en-US' : 'uz-UZ';
+      speech.rate = 0.9;
+      window.speechSynthesis.speak(speech);
+    }
+  }
+}
+
+// AVVALO TARJIMA QILISH
+translateNow();
+</script>
