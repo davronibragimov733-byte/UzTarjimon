@@ -71,38 +71,36 @@ async function translateNow() {
       throw new Error('API javob bermadi');
     }
   } catch(e) {
-    // 2. Yandex API (zaxira)
-    try {
-      const yandex = await fetch(https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20230101T000000Z.1234567890abcdef&text=${encodeURIComponent(text)}&lang=${from}-${to});
-      const ydata = await yandex.json();
-      
-      if(ydata.text && ydata.text[0]) {
-        document.getElementById('result').innerHTML = ydata.text[0];
-      } else {
-        document.getElementById('result').innerHTML = 'Xato: ' + e.message;
+    // 2. Lokal lug'at (zaxira)
+    const dict = {
+      'uz-en': {'salom':'hello','dunyo':'world','kitob':'book','uy':'house'},
+      'en-uz': {'hello':'salom','world':'dunyo','book':'kitob','house':'uy'},
+      'uz-ru': {'salom':'привет','dunyo':'мир'},
+      'ru-uz': {'привет':'salom','мир':'dunyo'},
+      'uz-tr': {'salom':'merhaba','dunyo':'dünya'},
+      'tr-uz': {'merhaba':'salom','dünya':'dunyo'}
+    };
+    
+    const key = from + '-' + to;
+    const words = text.toLowerCase().split(' ');
+    
+    // Eski brauzerlar uchun (optional chaining emas)
+    const translated = words.map(word => {
+      if (dict[key] && dict[key][word]) {
+        return dict[key][word];
       }
-    } catch(e2) {
-      // 3. Lokal lug'at
-      const dict = {
-        'uz-en': {'salom':'hello','dunyo':'world','kitob':'book','uy':'house'},
-        'en-uz': {'hello':'salom','world':'dunyo','book':'kitob','house':'uy'},
-        'uz-ru': {'salom':'привет','dunyo':'мир'},
-        'ru-uz': {'привет':'salom','мир':'dunyo'}
-      };
-      
-      const key = from + '-' + to;
-      const words = text.toLowerCase().split(' ');
-      const translated = words.map(word => dict[key]?.[word] || word).join(' ');
-
-document.getElementById('result').innerHTML = translated;
-    }
+      return word;
+    }).join(' ');
+    
+    document.getElementById('result').innerHTML = translated;
   }
 }
 
 // OVOZLI O'QISH
 function speakResult() {
   const text = document.getElementById('result').innerText;
-  if(text && text !== 'Natija shu yerda...' && !text.includes('Tarjima') && !text.includes('Xato')) {
+
+if(text && text !== 'Natija shu yerda...' && !text.includes('Tarjima') && !text.includes('Xato')) {
     if('speechSynthesis' in window) {
       const speech = new SpeechSynthesisUtterance(text);
       speech.lang = document.getElementById('toLang').value === 'en' ? 'en-US' : 'uz-UZ';
@@ -112,6 +110,9 @@ function speakResult() {
   }
 }
 
-// AVVALO TARJIMA QILISH
-translateNow();
+// SAYT YUKLANGANDA BIRINCHI TARJIMA
+window.onload = function() {
+  translateNow();
+};
 </script>
+
