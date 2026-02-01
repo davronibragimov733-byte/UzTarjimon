@@ -3,103 +3,210 @@
 <head>
     <title>TarjimonUz</title>
     <meta charset="UTF-8">
+    <style>
+        body { background: #f5f7fa; font-family: Arial; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h2 { color: #1a73e8; text-align: center; margin: 0 0 5px 0; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 14px; }
+        .language-row { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+        select, textarea { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; }
+        textarea { height: 150px; resize: vertical; }
+        button { width: 100%; padding: 16px; background: #1a73e8; color: white; border: none; border-radius: 10px; font-size: 17px; cursor: pointer; margin: 15px 0; font-weight: bold; }
+        button:hover { background: #0d5bb9; }
+        .result { min-height: 120px; padding: 20px; border: 2px solid #4caf50; border-radius: 10px; background: #f9f9f9; font-size: 17px; margin: 20px 0; }
+        .counter { text-align: right; color: #666; font-size: 14px; margin-top: 5px; }
+        .loading { color: #1a73e8; text-align: center; padding: 10px; }
+        .error { color: red; padding: 10px; }
+    </style>
 </head>
 <body>
-<div style="max-width:500px; margin:20px auto; padding:15px; background:white; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); font-family:Arial,sans-serif;">
-  
-  <div style="text-align:center; margin-bottom:20px;">
-    <h3 style="color:#1a73e8; margin:0;">TarjimonUz</h3>
-    <p style="color:#666; margin:5px 0 0 0; font-size:14px;">Google Translate bilan</p>
-  </div>
-  
-  <div style="display:flex; gap:10px; margin-bottom:15px;">
-    <div style="flex:1;">
-      <select id="fromLang" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
-        <option value="uz">O'zbekcha</option>
-        <option value="en">Inglizcha</option>
-        <option value="ru">Ruscha</option>
-        <option value="tr">Turkcha</option>
-      </select>
+    <div class="container">
+        <h2>🌍 TarjimonUz</h2>
+        <div class="subtitle">Google Translate bilan - 7000+ so'zni tarjima qiling</div>
+        
+        <div class="language-row">
+            <select id="fromLang">
+                <option value="uz">O'zbekcha 🇺🇿</option>
+                <option value="en">Inglizcha 🇺🇸</option>
+                <option value="ru">Ruscha 🇷🇺</option>
+                <option value="tr">Turkcha 🇹🇷</option>
+                <option value="ar">Arabcha 🇸🇦</option>
+                <option value="fa">Forscha 🇮🇷</option>
+                <option value="es">Ispancha 🇪🇸</option>
+                <option value="fr">Fransuzcha 🇫🇷</option>
+                <option value="de">Nemischa 🇩🇪</option>
+                <option value="zh">Xitoycha 🇨🇳</option>
+                <option value="ko">Koreyscha 🇰🇷</option>
+                <option value="ja">Yaponcha 🇯🇵</option>
+            </select>
+            <div style="font-size: 24px; color: #666;">⇄</div>
+            <select id="toLang">
+                <option value="en">Inglizcha 🇺🇸</option>
+                <option value="uz">O'zbekcha 🇺🇿</option>
+                <option value="ru">Ruscha 🇷🇺</option>
+                <option value="tr">Turkcha 🇹🇷</option>
+                <option value="ar">Arabcha 🇸🇦</option>
+                <option value="fa">Forscha 🇮🇷</option>
+                <option value="es">Ispancha 🇪🇸</option>
+                <option value="fr">Fransuzcha 🇫🇷</option>
+                <option value="de">Nemischa 🇩🇪</option>
+                <option value="zh">Xitoycha 🇨🇳</option>
+                <option value="ko">Koreyscha 🇰🇷</option>
+                <option value="ja">Yaponcha 🇯🇵</option>
+            </select>
+        </div>
+        
+        <textarea id="inputText" placeholder="Tarjima qilish uchun matn kiriting...">Salom, dunyo! Tarjimon dasturi ishlayapti.</textarea>
+        <div class="counter" id="charCount">0 belgi</div>
+        
+        <button id="translateBtn">🚀 Tarjima qilish</button>
+        
+        <div class="result" id="result">
+            Natija bu yerda ko'rinadi...
+        </div>
+        
+        <div style="display: flex; gap: 10px;">
+            <button id="speakBtn" style="background: #4caf50;">🔊 Ovozli o'qish</button>
+            <button id="copyBtn" style="background: #9c27b0;">📋 Nusxalash</button>
+        </div>
     </div>
-    <div style="display:flex; align-items:center; color:#666;">→</div>
-    <div style="flex:1;">
-      <select id="toLang" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
-        <option value="en">Inglizcha</option>
-        <option value="uz">O'zbekcha</option>
-        <option value="ru">Ruscha</option>
-        <option value="tr">Turkcha</option>
-      </select>
-    </div>
-  </div>
-  
-  <textarea id="inputText" style="width:100%; height:120px; padding:12px; border:1px solid #ddd; border-radius:6px; font-size:14px; resize:vertical; margin-bottom:10px;" placeholder="Matnni kiriting...">Salom</textarea>
-  
-  <button id="translateBtn" style="width:100%; padding:12px; background:#1a73e8; color:white; border:none; border-radius:6px; font-size:16px; cursor:pointer; margin-bottom:15px;">
-    Tarjima qilish
-  </button>
-  
-  <div id="result" style="min-height:100px; padding:15px; border:1px solid #4caf50; border-radius:6px; background:#f9f9f9; font-size:15px;">
-    Natija shu yerda...
-  </div>
-  
-  <button id="speakBtn" style="width:100%; padding:10px; background:#4caf50; color:white; border:none; border-radius:6px; font-size:14px; cursor:pointer; margin-top:10px;">
-    🔊 Ovozli o'qish
-  </button>
-</div>
 
-<script>
-function translateNow() {
-  const text = document.getElementById('inputText').value;
-  const from = document.getElementById('fromLang').value;
-  const to = document.getElementById('toLang').value;
-  
-  if(!text) {
-    document.getElementById('result').innerHTML = '<span style="color:red;">Matn kiriting!</span>';
-    return;
-  }
-  
-  document.getElementById('result').innerHTML = 'Tarjima qilinmoqda...';
-  
-  const dict = {
-    'uz-en': {'salom':'hello','dunyo':'world','kitob':'book','uy':'house'},
-    'en-uz': {'hello':'salom','world':'dunyo','book':'kitob','house':'uy'},
-    'uz-ru': {'salom':'привет','dunyo':'мир','kitob':'книга'},
-    'ru-uz': {'привет':'salom','мир':'dunyo','книга':'kitob'},
-    'uz-tr': {'salom':'merhaba','dunyo':'dünya','kitob':'kitap'},
-    'tr-uz': {'merhaba':'salom','dünya':'dunyo','kitap':'kitob'}
-  };
-  
-  const key = from + '-' + to;
-  const words = text.toLowerCase().split(' ');
-  
-  const translated = words.map(function(word) {
-    if (dict[key] && dict[key][word]) {
-      return dict[key][word];
-    }
-    return word;
-  }).join(' ');
-  
-  document.getElementById('result').innerHTML = translated;
-}
+    <script>
+        // GOOGLE TRANSLATE API
+        async function translateWithGoogle(text, sourceLang, targetLang) {
+            try {
+                // Google Translate API (bepul)
+                const url = https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)};
 
-function speakResult() {
-  const text = document.getElementById('result').innerText;
-  if(text && text !== 'Natija shu yerda...' && text !== 'Tarjima qilinmoqda...') {
-    if('speechSynthesis' in window) {
-      const speech = new SpeechSynthesisUtterance(text);
-      speech.lang = document.getElementById('toLang').value === 'en' ? 'en-US' : 'uz-UZ';
-      speech.rate = 0.9;
-      window.speechSynthesis.speak(speech);
-    }
-  }
-}
+const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data && data[0] && data[0][0] && data[0][0][0]) {
+                    return data[0][0][0];
+                }
+                throw new Error('Tarjima topilmadi');
+            } catch (error) {
+                console.error('Google Translate xatosi:', error);
+                throw error;
+            }
+        }
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('translateBtn').addEventListener('click', translateNow);
-  document.getElementById('speakBtn').addEventListener('click', speakResult);
-  translateNow();
-});
-</script>
+        // ALTERNATIV API - MyMemory (zaxira)
+        async function translateWithMyMemory(text, sourceLang, targetLang) {
+            try {
+                const url = https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang};
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.responseData && data.responseData.translatedText) {
+                    return data.responseData.translatedText;
+                }
+                throw new Error('MyMemory tarjima bermadi');
+            } catch (error) {
+                console.error('MyMemory xatosi:', error);
+                throw error;
+            }
+        }
+
+        // BELGILAR SANOQCHI
+        function updateCharCount() {
+            const text = document.getElementById('inputText').value;
+            document.getElementById('charCount').textContent = text.length + ' belgi';
+        }
+
+        // ASOSIY TARJIMA FUNKSIYASI
+        async function translateNow() {
+            const text = document.getElementById('inputText').value.trim();
+            const fromLang = document.getElementById('fromLang').value;
+            const toLang = document.getElementById('toLang').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!text) {
+                resultDiv.innerHTML = '<div class="error">✗ Iltimos, matn kiriting!</div>';
+                return;
+            }
+            
+            if (text.length > 5000) {
+                resultDiv.innerHTML = '<div class="error">✗ Matn 5000 belgidan oshmasligi kerak!</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="loading">⏳ Tarjima qilinmoqda...</div>';
+            
+            try {
+                // 1. Google Translate bilan urinib ko‘rish
+                let translated = await translateWithGoogle(text, fromLang, toLang);
+                resultDiv.innerHTML = translated;
+            } catch (googleError) {
+                try {
+                    // 2. Agar Google ishlamasa, MyMemory bilan urinib ko‘rish
+                    resultDiv.innerHTML = '<div class="loading">⏳ Zaxira tizim orqali tarjima...</div>';
+                    let translated = await translateWithMyMemory(text, fromLang, toLang);
+                    resultDiv.innerHTML = translated;
+                } catch (memoryError) {
+                    // 3. Ikkalasi ham ishlamasa, xato
+                    resultDiv.innerHTML = '<div class="error">✗ Internet yoki API muammosi. Internet aloqangizni tekshiring.</div>';
+                }
+            }
+        }
+
+        // OVOZLI O'QISH
+        function speakResult() {
+            const text = document.getElementById('result').innerText;
+            
+            if (!text  text.includes('Natija')  text.includes('✗')  text.includes('⏳')) {
+                alert('Avval muvaffaqiyatli tarjima qiling!');
+                return;
+            }
+            
+            if ('speechSynthesis' in window) {
+                const speech = new SpeechSynthesisUtterance(text);
+                speech.lang = document.getElementById('toLang').value + '-' + document.getElementById('toLang').value.toUpperCase();
+                speech.rate = 0.9;
+                speech.volume = 1;
+                window.speechSynthesis.speak(speech);
+            } else {
+                alert('Brauzeringiz ovozli o\'qishni qo\'llamaydi');
+            }
+        }
+
+
+
+        // NATIJANI NUSXALASH
+        function copyResult() {
+            const text = document.getElementById('result').innerText;
+            
+            if (!text  text.includes('Natija')  text.includes('✗')  text.includes('⏳')) {
+                alert('Nusxalash uchun natija mavjud emas!');
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Natija nusxalandi! 📋');
+            });
+        }
+
+        // SAYT YUKLANGANDA
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tugmalarni bog'lash
+            document.getElementById('translateBtn').addEventListener('click', translateNow);
+            document.getElementById('speakBtn').addEventListener('click', speakResult);
+            document.getElementById('copyBtn').addEventListener('click', copyResult);
+            
+            // Matn o'zgarganda belgilar sonini yangilash
+            document.getElementById('inputText').addEventListener('input', updateCharCount);
+            
+            // Boshlang'ich hisoblash
+            updateCharCount();
+            
+            // Enter tugmasi bilan tarjima qilish
+            document.getElementById('inputText').addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    translateNow();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
 
